@@ -316,6 +316,7 @@ export class ListManager implements Disposable {
     let autoPreview = false
     let numberSelect = false
     let noQuit = false
+    let reverse = false
     let name: string
     let input = ''
     let matcher: Matcher = 'fuzzy'
@@ -360,6 +361,8 @@ export class ListManager implements Disposable {
         options.push(opt.slice(2))
       } else if (opt == '--no-quit') {
         noQuit = true
+      } else if (opt == '--reverse') {
+        reverse = true
       } else {
         workspace.showMessage(`Invalid option "${opt}" of list`, 'error')
         return null
@@ -387,7 +390,8 @@ export class ListManager implements Disposable {
         position,
         ignorecase: options.includes('ignore-case') ? true : false,
         mode: !options.includes('normal') ? 'insert' : 'normal',
-        sort: !options.includes('no-sort') ? true : false
+        sort: !options.includes('no-sort') ? true : false,
+        reverse
       },
     }
   }

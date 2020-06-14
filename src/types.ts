@@ -824,6 +824,7 @@ export type ListMode = 'normal' | 'insert'
 export type Matcher = 'strict' | 'fuzzy' | 'regex'
 
 export interface ListOptions {
+  reverse: boolean
   position: string
   input: string
   ignorecase: boolean

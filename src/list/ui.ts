@@ -310,15 +310,16 @@ export default class ListUI {
 
   public async drawItems(items: ListItem[], name: string, listOptions: ListOptions, reload = false): Promise<void> {
     let { bufnr, config, nvim } = this
-    this.newTab = listOptions.position == 'tab'
+    let { position, reverse, numberSelect } = listOptions
+    this.newTab = position == 'tab'
     let maxHeight = config.get<number>('maxHeight', 12)
     let height = Math.max(1, Math.min(items.length, maxHeight))
     let limitLines = config.get<number>('limitLines', 30000)
+    this.items = reverse ? items.reverse().slice(0, limitLines) : items.slice(0, limitLines)
     let curr = this.items[this.index]
-    this.items = items.slice(0, limitLines)
     if (bufnr == 0 && !this.creating) {
       this.creating = true
-      let [bufnr, winid] = await nvim.call('coc#list#create', [listOptions.position, height, name, listOptions.numberSelect])
+      let [bufnr, winid] = await nvim.call('coc#list#create', [position, height, name, numberSelect])
       this._bufnr = bufnr
       this.window = nvim.createWindow(winid)
       this.height = height
@@ -329,7 +330,7 @@ export default class ListUI {
     }
     let lines = this.items.map(item => item.label)
     this.clearSelection()
-    await this.setLines(lines, false, reload ? this.currIndex : 0)
+    await this.setLines(lines, false, reload ? this.index : reverse ? items.length - 1 : 0)
     let item = this.items[this.index] || { label: '' }
     if (!curr || curr.label != item.label) {
       this._onDidLineChange.fire(this.index + 1)
